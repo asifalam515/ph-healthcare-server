@@ -11,37 +11,40 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
-  user:{
-    additionalFields:{
-      role:{
+  user: {
+    additionalFields: {
+      role: {
         type: "string",
         required: true,
-   defaultValue:Role.PATIENT
+        defaultValue: Role.PATIENT,
       },
-      status:{
+      status: {
         type: "string",
         required: true,
-        defaultValue:UserStatus.ACTIVE
+        defaultValue: UserStatus.ACTIVE,
       },
-      needsPasswordChange:{
+      needsPasswordChange: {
         type: "boolean",
         required: true,
-        defaultValue:false
+        defaultValue: false,
       },
-      isDeleted:{
+      isDeleted: {
         type: "boolean",
         required: true,
-        defaultValue:false
+        defaultValue: false,
       },
-      deletedAt:{
+      deletedAt: {
         type: "datetime",
         required: true,
-        defaultValue:null
-      }
-      
-      
-    }
+        defaultValue: null,
+      },
+    },
   },
-  secret:process.env.BETTER_AUTH_SECRET,
-  baseUrl:process.env.BETTER_AUTH_URL
+  // trustedOrigins: [process.env.BETTER_AUTH_URL as string],
+  // advanced: {
+  //   disableCSRFCheck: true,
+  // },
+
+  secret: process.env.BETTER_AUTH_SECRET,
+  baseUrl: process.env.BETTER_AUTH_URL,
 });
