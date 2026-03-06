@@ -15,7 +15,8 @@ model User {
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
-patients      Patient[]
+  patient     Patient?
+  doctor Doctor?
   @@unique([email])
   @@map("user")
 }
