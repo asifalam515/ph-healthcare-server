@@ -1,3 +1,5 @@
+import status from "http-status";
+import AppError from "../../errorHelpers/AppError";
 import { auth } from "../../lib/auth";
 import { prisma } from "../../lib/prisma";
 
@@ -17,39 +19,38 @@ const registerPatient = async (payload: IRegisterPatient) => {
     },
   });
   if (!data.token) {
-    throw new Error("Failed to register user");
+    throw new AppError(status.BAD_REQUEST, "can't register patient");
   }
   //   create patient profile in transaction after sign up of patient in user model
-try {
-      const patient = await prisma.$transaction(async (tx) => {
-   const patientTx=   await tx.patient.create({
-        data:{
-          userId:data.user.id,
-          name:payload.name,
-          email:payload.email,
-          contactNumber:payload?.contactNumber,
-          
-        }
-      })
-      return patientTx
+  try {
+    const patient = await prisma.$transaction(async (tx) => {
+      const patientTx = await tx.patient.create({
+        data: {
+          userId: data.user.id,
+          name: payload.name,
+          email: payload.email,
+          contactNumber: payload?.contactNumber,
+        },
+      });
+      return patientTx;
     });
 
-  return {...data,patient}
-} catch (error) {
-console.log("transaction error: ",error)
-await prisma.user.delete({
-  where:{
-    id:data.user.id
+    return { ...data, patient };
+  } catch (error) {
+    console.log("transaction error: ", error);
+    await prisma.user.delete({
+      where: {
+        id: data.user.id,
+      },
+    });
+    throw error;
   }
-})
-throw error
-}
-}
+};
 interface ILoginUserPayload {
   password: string;
 }
 const loginUser = async (payload: ILoginUserPayload) => {
-  const {email,password} =payload
+  const { email, password } = payload;
   const data = await auth.api.signInEmail({
     body: {
       email,
